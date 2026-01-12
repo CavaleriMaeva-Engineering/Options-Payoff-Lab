@@ -67,15 +67,41 @@ class BarrierOption(Option) :
         #Calcul du payoff 
         if is_active :
             if self.is_call :
-                return max(0,spot[-1]-self.K)
+                return np.maximum(0,spot[-1]-self.K)
             else :
-                return max(0,self.K-spot[-1])
+                return np.maximum(0,self.K-spot[-1])
         else :
             return 0.0
             
             
+class LookBackOption(Option) :
+    """
+    Cette classe implémente l'option Lookback (path-dependent).
+    Elle permet de réduire le risque de timing en utilisant les prix extrêmes 
+    (maximum ou minimum) atteints par l'actif durant la période.
+    
+    Types supportés :
+    - 'Fixe' : On compare un extrême au Strike K.
+    - 'Flottant' : Le Strike est remplacé par l'extrême atteint.
+    """
+    
+    def __init__(self,strike,expiry,premium=0.0,is_call=True,type_option='Flottant') :
+        super().__init__(strike,expiry,premium)
+        self.is_call=is_call
+        self.type_option=type_option
+
+    def payoff(self,spot) :
+        if self.type_option=='Fixe' :
+            if self.is_call :
+                return np.maximum(0,np.max(spot)-self.K)
+            else :
+                return np.maximum(0,self.K-np.min(spot))
+        elif self.type_option=='Flottant' :
+            if self.is_call :
+                return spot[-1]-np.min(spot)
+            else :
+                return np.max(spot)-spot[-1]
         
-            
             
             
             
