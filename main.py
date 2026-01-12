@@ -37,22 +37,24 @@ def main() :
     ]
     
     #Boucle de test
-    print("="*50)
+    print("=" * 65)
     print(f"TRAJECTOIRE DE TEST : {price_path}")
     print(f"STRIKE DE RÉFÉRENCE : {K}")
-    print("="*50)
-    print(f"{'TYPE OPTION':<25} | {'PAYOFF':<10}")
-    print("-"*50)
+    print("=" * 65)
+    print(f"{'TYPE OPTION':<25} | {'PAYOFF':<10} | {'P&L NET':<10}")
+    print("-" * 65)
     
-    for option in portfolio :
-        name=option.__class__.__name__
-        try :
-            result=option.payoff(price_path)
-            print(f"{name:<25} | {result:>10.2f}")
+    for option in portfolio:
+        category = "Vanilla" if "vanilla" in option.__module__ else "Exotic"
+        name = option.__class__.__name__
+        full_display_name = f"{category} {name}"
+        try:
+            payoff_brut=option.payoff(price_path)
+            pnl_net=option.calculate_pnl(price_path)
+            print(f"{full_display_name:<25} | {payoff_brut:>10.2f} | {pnl_net:>10.2f}")
         except Exception as e:
             print(f"{name:<25} | ERREUR : {e}")
-    print("="*50)
+    print("=" * 65)
 
-  
 if __name__=="__main__":
   main()
