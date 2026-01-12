@@ -31,4 +31,9 @@ class Option (ABC) :
       Le gain positif ou nul généré par l'exercice de l'option.
     """
     pass
-    
+
+  def calculate_pnl(self, spot):
+      """
+      Calcule le profit net (Payoff - Prime).
+      """
+      return self.payoff(spot)-self.P
